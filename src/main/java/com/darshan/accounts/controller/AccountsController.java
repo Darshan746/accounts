@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +30,8 @@ public class AccountsController {
     @Autowired
     AccountsServiceConfig accountsConfig;
 
+
+private static final Logger logger  = LoggerFactory.getLogger(AccountsController.class);
     @Autowired
     public LoanFeignClient loanFeignClient;
 
@@ -53,6 +57,7 @@ public class AccountsController {
     public CustomerDetails getCustomerDetails(@RequestBody Customer customer){
        // Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId());
         Accounts accounts =  new Accounts();
+
         accounts.setCustomerId(1);
         List<Loans> loans = loanFeignClient.getLoansDetail(customer);
         List<Cards> cards = cardsFeignClient.getCardDetails(customer);
@@ -83,6 +88,7 @@ public class AccountsController {
     @GetMapping("/sayHello")
     @RateLimiter(name = "sayHello", fallbackMethod = "sayHelloFallback")
     public String sayHello() {
+        logger.info("method starts is sayHello()");
         return "Hello, Welcome to EazyBank";
     }
 
